@@ -1,27 +1,54 @@
 const { ApolloServer, gql } = require('apollo-server');
 
-const Students = [
-                   {
-                       "id": 1,
-                       "name": "Shoaib",
-                       "email": "shoaib@gmail.com",
-                       "age": 40
-                   },
-                   
-                   {
-                    "id": 2,
-                    "name": "Saeed",
-                    "email": "saeed@gmail.com",
-                    "age": 40
-                    },
+let students = [
+  {
+    "id": 1,
+    "name": "Shoaib",
+    "email": "shoaib@gmail.com",
+    "age": 40
+  },
 
-                    {
-                        "id": 3,
-                        "name": "Asif",
-                        "email": "asif@gmail.com",
-                        "age": 50
-                    }
-            ]
+  {
+    "id": 2,
+    "name": "Saeed",
+    "email": "saeed@gmail.com",
+    "age": 40
+  },
+
+  {
+    "id": 3,
+    "name": "Asif",
+    "email": "asif@gmail.com",
+    "age": 50
+  }
+]
+
+
+const resolvers = {
+  Query: {
+    students: () => students,
+  },
+
+  Mutation: {
+    addStudent: (_, { input }) => {
+
+      students.push(
+        {
+          id: input.id,
+          name: input.name,
+          email: input.email,
+          age: input.age
+        }
+      )
+      return {
+        id: input.id,
+        name: input.name,
+        email: input.email,
+        age: input.age
+      }
+    }
+  }
+};
 const typeDefs = gql`
   
   type Student {
@@ -31,17 +58,28 @@ const typeDefs = gql`
     age: Int
   }
 
+  input StdInput {
+    id: Int
+    name: String
+    email: String
+    age: Int
+  }
+
   
   type Query {
-    Students: [Student]
+    students: [Student]
   }
-`;
 
-const resolvers = {
-    Query: {
-      Students: () => Students,
-    },
-  };
+  type Mutation {
+    addStudent(input: StdInput): Student
+  
+  }
+
+  `;
+
+
+
+
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
